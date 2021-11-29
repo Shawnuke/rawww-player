@@ -9,6 +9,10 @@ class RawwwPlayer extends HTMLElement {
         const supportsVideo = !!document.createElement('video').canPlayType
         if (!supportsVideo) return
 
+		// Check if the browser supports the Fullscreen API
+        this.fullScreenEnabled = !!(document.fullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled || document.webkitSupportsFullscreen || document.webkitFullscreenEnabled || document.createElement('video').webkitRequestFullScreen)
+        // If the browser doesn't support the Fulscreen API, then hide the fullscreen button
+
         this.$video = this.querySelector('video')
         this.$video.controls = false
 	}
