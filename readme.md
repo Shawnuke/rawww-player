@@ -32,22 +32,22 @@ Currently ? none.
 * [ ] fallback to `<video controls>` for non-JS users
 * [ ] play/pause button
 * [ ] current & total video time display
-* [ ] manipulable progress bar, with playhead and scrubber-head
-* [ ] buffered stream display
-* [ ] volume control
 * [ ] mute/unmute button
 * [ ] download button
 * [ ] fullscreen mode
-* [ ] 10sec rewind/fast forward buttons
 * [ ] subtitles display
+* [ ] 10sec rewind/fast forward buttons
+* [ ] manipulable progress bar, with playhead and scrubber-head
+* [ ] buffered stream display
+* [ ] volume control
 * [ ] Video quality (bitrates) settings
 * [ ] Video speed management
-* [ ] [a11y](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
-* [ ] fairly customizable (e.g. solid or fade-in controls, colors, ...)
-* [ ] playlist management (next/previous btns, ...)
 * [ ] Share button
-* [ ] Embed button
 * [ ] Info button
+* [ ] playlist management (next/previous btns, ...)
+* [ ] fairly customizable (e.g. solid or fade-in controls, colors, ...)
+* [ ] [a11y](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
+
 
 ## Specifications
 **NOTE:** This Custom Element is built using Chrome, but other browsers should work too. (cross-browser testing will come at some point anyway)
