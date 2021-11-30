@@ -14,7 +14,17 @@ class RawwwPlayer extends HTMLElement {
         // If the browser doesn't support the Fulscreen API, then hide the fullscreen button
 
         this.$video = this.querySelector('video')
-        this.$video.controls = false
+        // this.$video.controls = false
+
+		this.$playBtn = this.querySelector('.play-btn')
+
+		this.setListeners()
+	}
+	togglePlayPause() {
+		this.$video.paused ? this.$video.play() : this.$video.pause()
+	}
+	setListeners() {
+		this.$playBtn.addEventListener('click', this.togglePlayPause.bind(this))
 	}
 }
 customElements.define('rawww-player', RawwwPlayer)
