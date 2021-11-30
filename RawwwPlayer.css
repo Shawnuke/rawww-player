@@ -2,6 +2,3 @@ rawww-player {
     display: block;
     width: 800px;
 }
-rawww-player .time-display::after {
-    content: attr(data-duration);
-}
