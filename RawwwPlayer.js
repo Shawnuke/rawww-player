@@ -18,6 +18,7 @@ class RawwwPlayer extends HTMLElement {
 		// this.$video.controls = false // to be uncommented later
 
 		this.$time = this.querySelector('.time-display')
+		this.$time.textContent = this.formatTime(this.$video.currentTime)
 		this.$playBtn = this.querySelector('.play-btn')
 
 		this.$rewindBtn = this.querySelector('.rewind-btn')
