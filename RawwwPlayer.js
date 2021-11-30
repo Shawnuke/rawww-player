@@ -19,10 +19,13 @@ class RawwwPlayer extends HTMLElement {
 
 		this.$time = this.querySelector('.time-display')
 		this.$time.textContent = this.formatTime(this.$video.currentTime)
+
 		this.$playBtn = this.querySelector('.play-btn')
 
 		this.$rewindBtn = this.querySelector('.rewind-btn')
 		this.$forwardBtn = this.querySelector('.forward-btn')
+
+		this.$track = this.querySelector('.track')
 
 		this.setListeners()
 	}
@@ -37,7 +40,12 @@ class RawwwPlayer extends HTMLElement {
 
 		this.$video.addEventListener('timeupdate', (e) => {
 			this.$time.textContent = this.formatTime(this.$video.currentTime)
+
+			this.updateProgressBar()
 		})
+	}
+	updateProgressBar() {
+		this.$track.style.setProperty('--progress', Math.trunc(this.$video.currentTime / this.$video.duration * 100) / 100)
 	}
 	jumpBy(seconds) {
 		this.$video.currentTime += seconds
@@ -54,11 +62,11 @@ class RawwwPlayer extends HTMLElement {
 		this.$time.dataset.duration = ` / ${formatedTime}`
 	}
 	formatTime(durationInSeconds) { // function to convert a timestamp in seconds to display in HH:MM:SS format
-		const duration = Math.floor(durationInSeconds)
+		const duration = Math.trunc(durationInSeconds)
 
-		const h = Math.floor(duration / 360)
-		const m = Math.floor(duration % 360 / 60)
-		const s = Math.floor(duration % 60)
+		const h = Math.trunc(duration / 360)
+		const m = Math.trunc(duration % 360 / 60)
+		const s = Math.trunc(duration % 60)
 		
 		const hh = h.toString().length == 2 ? h : `0${h}`
 		const mm = m.toString().length == 2 ? m : `0${m}`
