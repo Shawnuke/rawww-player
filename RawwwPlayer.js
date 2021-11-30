@@ -42,7 +42,7 @@ class RawwwPlayer extends HTMLElement {
 		const ss = s.toString().length == 2 ? s : `0${s}`
 
 		if (hh == '00') {
-			return m.toString().length == 1 ? ${m}:${ss} : `${mm}:${ss}`
+			return m.toString().length == 1 ? `${m}:${ss}` : `${mm}:${ss}`
 		} else {
 			return `${hh}:${mm}:${ss}`
 		}
