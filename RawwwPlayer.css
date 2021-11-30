@@ -1,7 +1,29 @@
 rawww-player {
     display: block;
     width: 800px;
+    --track-height: 3px;
+    --track-color: rgb(255, 115, 0);
+}
+rawww-player button {
+    appearance: none;
 }
 rawww-player .time-display::after {
     content: attr(data-duration);
+}
+rawww-player .track {
+    position: relative;
+    flex: 1;
+    height: var(--track-height);
+    --progress: 0;
+}
+rawww-player .track::after /* progress */ {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: left;
+    transform: scaleX(var(--progress));
+    background-color: var(--track-color);
 }
