@@ -20,18 +20,40 @@ class RawwwPlayer extends HTMLElement {
 		this.$time = this.querySelector('.time-display')
 		this.$playBtn = this.querySelector('.play-btn')
 
+		this.$rewindBtn = this.querySelector('.rewind-btn')
+		this.$forwardBtn = this.querySelector('.forward-btn')
+
 		this.setListeners()
 	}
 	setListeners() {
 		this.$video.addEventListener('loadedmetadata', this.displayVideoDuration.bind(this))
 		this.$playBtn.addEventListener('click', this.togglePlayPause.bind(this))
+		this.$rewindBtn.addEventListener('click', this.jumpBy.bind(this, -10))
+		this.$forwardBtn.addEventListener('click', this.jumpBy.bind(this, 10))
+
+		this.$video.addEventListener('play', this.updatePlayBtn.bind(this, 'play'))
+		this.$video.addEventListener('pause', this.updatePlayBtn.bind(this, 'pause'))
+
+		this.$video.addEventListener('timeupdate', (e) => {
+			this.$time.textContent = this.formatTime(this.$video.currentTime)
+		})
+	}
+	jumpBy(seconds) {
+		this.$video.currentTime += seconds
+	}
+	updatePlayBtn(state) {
+		if (state == 'play') {
+			this.$playBtn.textContent = 'pause'
+		} else {
+			this.$playBtn.textContent = 'play'
+		}
 	}
 	displayVideoDuration() {
 		const formatedTime = this.formatTime(this.$video.duration)
 		this.$time.dataset.duration = ` / ${formatedTime}`
 	}
 	formatTime(durationInSeconds) { // function to convert a timestamp in seconds to display in HH:MM:SS format
-		const duration = Math.round(durationInSeconds)
+		const duration = Math.floor(durationInSeconds)
 
 		const h = Math.floor(duration / 360)
 		const m = Math.floor(duration % 360 / 60)
