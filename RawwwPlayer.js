@@ -27,6 +27,9 @@ class RawwwPlayer extends HTMLElement {
 
 		this.$track = this.querySelector('.track')
 
+		this.currentTimeRange = {}
+		this.currentTimeRange.index = 0
+
 		this.setListeners()
 	}
 	setListeners() {
@@ -40,9 +43,33 @@ class RawwwPlayer extends HTMLElement {
 
 		this.$video.addEventListener('timeupdate', (e) => {
 			this.$time.textContent = this.formatTime(this.$video.currentTime)
-
 			this.updateProgressBar()
+
+			this.getCurrentTimeRange() // select the good timerange for preload visualisation
+			this.updateBufferedBar()
 		})
+	}
+	getCurrentTimeRange() {
+		const testTimeRange = {}
+		for (let i = this.$video.buffered.length - 1; i >= 0; i--) {
+			testTimeRange.start = this.$video.buffered.start(i)
+			testTimeRange.end = this.$video.buffered.end(i)
+
+			if (testTimeRange.start <= this.$video.currentTime && testTimeRange.end >= this.$video.currentTime) {
+				this.currentTimeRange = testTimeRange
+				this.currentTimeRange.index = i
+				return
+			}
+		}
+	}
+	updateBufferedBar() {
+		this.currentTimeRange.duration = this.currentTimeRange.end - this.currentTimeRange.start
+
+		const posX = this.currentTimeRange.start / this.$video.duration
+		const width = this.currentTimeRange.duration / this.$video.duration
+
+		this.$track.style.setProperty('--preload-x', posX)
+		this.$track.style.setProperty('--preload-width', width)
 	}
 	updateProgressBar() {
 		this.$track.style.setProperty('--progress', Math.trunc(this.$video.currentTime / this.$video.duration * 100) / 100)
