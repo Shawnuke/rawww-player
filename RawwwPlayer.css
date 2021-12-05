@@ -15,6 +15,8 @@ rawww-player .track {
     flex: 1;
     height: var(--track-height);
     --progress: 0;
+    --preload-x: 0;
+    --preload-width: 0;
 }
 rawww-player .track::after /* progress */ {
     content: "";
