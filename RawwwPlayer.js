@@ -4,14 +4,7 @@ class RawwwPlayer extends HTMLElement {
 	constructor() {
 		super()
 		
-		// Check if the browser actually supports the video element
-		// example: Opera Mini supports JS but not <video> element
-		const supportsVideo = !!document.createElement('video').canPlayType
-		if (!supportsVideo) return
-
-		// Check if the browser supports the Fullscreen API
-		this.fullScreenEnabled = !!(document.fullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled || document.webkitSupportsFullscreen || document.webkitFullscreenEnabled || document.createElement('video').webkitRequestFullScreen)
-		// If the browser doesn't support the Fulscreen API, then hide the fullscreen button
+		this.checkBrowserSupport()
 
 		// store handles to DOM
 		this.$video = this.querySelector('video')
@@ -31,6 +24,29 @@ class RawwwPlayer extends HTMLElement {
 		this.currentTimeRange.index = 0
 
 		this.setListeners()
+	}
+	checkBrowserSupport() {
+		// Check if the browser actually supports the video element
+		// example: Opera Mini supports JS but not <video> element
+		const supportsVideo = !!document.createElement('video').canPlayType
+		if (!supportsVideo) {
+			console.log('The browser doesn\'t support the HTML <video> element')
+			return
+		}
+
+		// Check if the browser supports the Fullscreen API
+		const fullScreenSupported = !!(document.fullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled || document.webkitSupportsFullscreen || document.webkitFullscreenEnabled || document.createElement('video').webkitRequestFullScreen)
+		if (!fullScreenSupported) {
+			console.log('The browser doesn\'t support the Fullscreen API')
+			// If the browser doesn't support the Fulscreen API, then hide the fullscreen button
+		}
+
+		// Check if the user device is mainly finger-driven
+		this.primaryPointerType = matchMedia('(pointer:coarse)').matches ? 'coarse' : 'fine'
+		console.log('Primary pointer is ' + this.primaryPointerType)
+		if ('coarse' == this.primaryPointer) {
+			// If the primary (or should it be 'any'?) pointer is coarse, set the interface accordingly
+		}
 	}
 	setListeners() {
 		this.$video.addEventListener('loadedmetadata', this.displayVideoDuration.bind(this))
