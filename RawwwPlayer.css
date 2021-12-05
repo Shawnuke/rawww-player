@@ -4,6 +4,10 @@ rawww-player {
     --track-height: 3px;
     --track-color: rgb(255, 115, 0);
 }
+rawww-player video {
+    width: 100%;
+    height: 100%;
+}
 rawww-player button {
     appearance: none;
 }

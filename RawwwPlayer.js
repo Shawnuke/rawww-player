@@ -7,11 +7,19 @@ class RawwwPlayer extends HTMLElement {
 		this.checkBrowserSupport()
 
 		// store handles to DOM
+		this.storeHandlesToDOM()
+
+		// this.$video.controls = true // to be inverted later
+
+		// set properties
+		this.currentTimeRange = { index: 0 }
+
+		this.setListeners()
+	}
+	storeHandlesToDOM() {
 		this.$video = this.querySelector('video')
-		// this.$video.controls = false // to be uncommented later
 
 		this.$time = this.querySelector('.time-display')
-		this.$time.textContent = this.formatTime(this.$video.currentTime)
 
 		this.$playBtn = this.querySelector('.play-btn')
 
@@ -19,11 +27,6 @@ class RawwwPlayer extends HTMLElement {
 		this.$forwardBtn = this.querySelector('.forward-btn')
 
 		this.$track = this.querySelector('.track')
-
-		this.currentTimeRange = {}
-		this.currentTimeRange.index = 0
-
-		this.setListeners()
 	}
 	checkBrowserSupport() {
 		// Check if the browser actually supports the video element
@@ -49,7 +52,10 @@ class RawwwPlayer extends HTMLElement {
 		}
 	}
 	setListeners() {
-		this.$video.addEventListener('loadedmetadata', this.displayVideoDuration.bind(this))
+		this.$video.addEventListener('loadedmetadata', () => {
+			this.$time.textContent = this.formatTime(this.$video.currentTime)
+			this.displayVideoDuration()
+		})
 		this.$playBtn.addEventListener('click', this.togglePlayPause.bind(this))
 		this.$rewindBtn.addEventListener('click', this.jumpBy.bind(this, -10))
 		this.$forwardBtn.addEventListener('click', this.jumpBy.bind(this, 10))
