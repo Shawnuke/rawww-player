@@ -12,7 +12,12 @@ class RawwwPlayer extends HTMLElement {
 		// this.$video.controls = true // to be inverted later
 
 		// set properties
-		this.currentTimeRange = { index: 0 }
+		this.currentTimeRange = {
+			index: 0,
+			start: 0,
+			end: 0,
+			duration: 0
+		}
 
 		this.setListeners()
 	}
@@ -52,24 +57,88 @@ class RawwwPlayer extends HTMLElement {
 		}
 	}
 	setListeners() {
-		this.$video.addEventListener('loadedmetadata', () => {
-			this.$time.textContent = this.formatTime(this.$video.currentTime)
-			this.displayVideoDuration()
-		})
 		this.$playBtn.addEventListener('click', this.togglePlayPause.bind(this))
 		this.$rewindBtn.addEventListener('click', this.jumpBy.bind(this, -10))
 		this.$forwardBtn.addEventListener('click', this.jumpBy.bind(this, 10))
 
-		this.$video.addEventListener('play', this.updatePlayBtn.bind(this, 'play'))
-		this.$video.addEventListener('pause', this.updatePlayBtn.bind(this, 'pause'))
-
-		this.$video.addEventListener('timeupdate', (e) => {
-			this.$time.textContent = this.formatTime(this.$video.currentTime)
-			this.updateProgressBar()
-
-			this.getCurrentTimeRange() // select the good timerange for preload visualisation
-			this.updateBufferedBar()
+		this.$video.addEventListener('audioprocess', () => {
+			console.log('audioprocess')
 		})
+		this.$video.addEventListener('canplay', () => {
+			console.log('canplay')
+		})
+		this.$video.addEventListener('canplaythrough', () => {
+			console.log('canplaythrough')
+		})
+		this.$video.addEventListener('complete', () => {
+			console.log('complete')
+		})
+		this.$video.addEventListener('durationchange', () => {
+			console.log('durationchange')
+			this.updateCurrentTime()
+			this.displayVideoDuration()
+		})
+		this.$video.addEventListener('emptied', () => {
+			console.log('emptied')
+		})
+		this.$video.addEventListener('ended', () => {
+			console.log('ended')
+		})
+		this.$video.addEventListener('loadeddata', () => {
+			console.log('loadeddata')
+		})
+		this.$video.addEventListener('loadedmetadata', () => {
+			console.log('loadedmetadata')
+		})
+		this.$video.addEventListener('pause', () => {
+			console.log('pause')
+			this.updatePlayBtn('pause')
+		})
+		this.$video.addEventListener('play', () => {
+			console.log('play')
+			this.updatePlayBtn('play')
+		})
+		this.$video.addEventListener('playing', () => {
+			console.log('playing')
+		})
+		this.$video.addEventListener('progress', () => {
+			console.log('progress')
+			this.getCurrentTimeRange()
+			this.updatePreloadBar()
+		})
+		this.$video.addEventListener('ratechange', () => {
+			console.log('ratechange')
+		})
+		this.$video.addEventListener('seeked', () => {
+			console.log('seeked')
+			this.getCurrentTimeRange() // select the good timerange for preload visualisation
+			this.updatePreloadBar()
+		})
+		this.$video.addEventListener('seeking', () => {
+			console.log('seeking')
+			this.updateCurrentTime()
+			this.updatePlaybackBar()
+		})
+		this.$video.addEventListener('stalled', () => {
+			console.log('stalled')
+		})
+		this.$video.addEventListener('suspend', () => {
+			console.log('suspend')
+		})
+		this.$video.addEventListener('timeupdate', () => {
+			console.log('timeupdate')
+			this.updatePlaybackBar()
+			this.updateCurrentTime()
+		})
+		this.$video.addEventListener('volumechange', () => {
+			console.log('volumechange')
+		})
+		this.$video.addEventListener('waiting', () => {
+			console.log('waiting')
+		})
+	}
+	updateCurrentTime() {
+		this.$time.textContent = this.formatTime(this.$video.currentTime)
 	}
 	getCurrentTimeRange() {
 		const testTimeRange = {}
@@ -78,23 +147,21 @@ class RawwwPlayer extends HTMLElement {
 			testTimeRange.end = this.$video.buffered.end(i)
 
 			if (testTimeRange.start <= this.$video.currentTime && testTimeRange.end >= this.$video.currentTime) {
-				this.currentTimeRange = testTimeRange
-				this.currentTimeRange.index = i
+				this.currentTimeRange = { index: i, ...testTimeRange }
 				return
 			}
 		}
 	}
-	updateBufferedBar() {
-		this.currentTimeRange.duration = this.currentTimeRange.end - this.currentTimeRange.start
-
-		const posX = this.currentTimeRange.start / this.$video.duration
-		const width = this.currentTimeRange.duration / this.$video.duration
+	updatePreloadBar() {
+		this.currentTimeRange.duration = (this.currentTimeRange.end || 0) - (this.currentTimeRange.start || 0)
+		const posX = Math.trunc((this.currentTimeRange.start || 0) / this.$video.duration * 1000) / 1000
+		const width = Math.trunc(this.currentTimeRange.duration / this.$video.duration * 1000) / 1000
 
 		this.$track.style.setProperty('--preload-x', posX)
 		this.$track.style.setProperty('--preload-width', width)
 	}
-	updateProgressBar() {
-		this.$track.style.setProperty('--progress', Math.trunc(this.$video.currentTime / this.$video.duration * 100) / 100)
+	updatePlaybackBar() {
+		this.$track.style.setProperty('--playback-width', Math.trunc(this.$video.currentTime / this.$video.duration * 1000) / 1000)
 	}
 	jumpBy(seconds) {
 		this.$video.currentTime += seconds
