@@ -8,33 +8,33 @@ rawww-player video {
     width: 100%;
     height: 100%;
 }
+/* rawww-player video::-webkit-media-controls {
+    display: none !important;
+} */
+
 rawww-player button {
     appearance: none;
 }
 rawww-player .time-display::after {
     content: attr(data-duration);
 }
-rawww-player .track {
+rawww-player .preload-bar,
+rawww-player .playback-bar {
     position: relative;
+    width: 100%;
+    height: var(--track-height);
     flex: 1;
     height: var(--track-height);
-    --playback-width: 0;
-    --preload-x: 0;
-    --preload-width: 0;
-}
-rawww-player .track::after /* playback */ {
-    content: "";
-    position: absolute;
-    inset: var(--track-height) 0 calc(var(--track-height) * -1);
     transform-origin: left;
+}
+rawww-player .playback-bar {
+    --playback-width: 0;
     transform: scaleX(var(--playback-width));
     background-color: var(--track-color);
 }
-rawww-player .track::before /* preload */ {
-    content: "";
-    position: absolute;
-    inset: 0;
-    transform-origin: left;
+rawww-player .preload-bar {
+    --preload-x: 0;
+    --preload-width: 0;
     transform: translateX(var(--preload-x)) scaleX(var(--preload-width));
     background-color: grey;
 }

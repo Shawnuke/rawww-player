@@ -31,7 +31,10 @@ class RawwwPlayer extends HTMLElement {
 		this.$rewindBtn = this.querySelector('.rewind-btn')
 		this.$forwardBtn = this.querySelector('.forward-btn')
 
-		this.$track = this.querySelector('.track')
+		this.$preloadBar = this.querySelector('.preload-bar')
+		this.$playbackBar = this.querySelector('.playback-bar')
+
+		this.$fullscreenBtn = this.querySelector('.fullscreen-btn')
 	}
 	checkBrowserSupport() {
 		// Check if the browser actually supports the video element
@@ -60,6 +63,7 @@ class RawwwPlayer extends HTMLElement {
 		this.$playBtn.addEventListener('click', this.togglePlayPause.bind(this))
 		this.$rewindBtn.addEventListener('click', this.jumpBy.bind(this, -10))
 		this.$forwardBtn.addEventListener('click', this.jumpBy.bind(this, 10))
+		this.$fullscreenBtn.addEventListener('click', this.toggleFullscreen.bind(this))
 
 		this.$video.addEventListener('audioprocess', () => {
 			console.log('audioprocess')
@@ -157,11 +161,11 @@ class RawwwPlayer extends HTMLElement {
 		const posX = Math.trunc((this.currentTimeRange.start || 0) / this.$video.duration * 1000) / 1000
 		const width = Math.trunc(this.currentTimeRange.duration / this.$video.duration * 1000) / 1000
 
-		this.$track.style.setProperty('--preload-x', posX)
-		this.$track.style.setProperty('--preload-width', width)
+		this.$preloadBar.style.setProperty('--preload-x', posX)
+		this.$preloadBar.style.setProperty('--preload-width', width)
 	}
 	updatePlaybackBar() {
-		this.$track.style.setProperty('--playback-width', Math.trunc(this.$video.currentTime / this.$video.duration * 1000) / 1000)
+		this.$playbackBar.style.setProperty('--playback-width', Math.trunc(this.$video.currentTime / this.$video.duration * 1000) / 1000)
 	}
 	jumpBy(seconds) {
 		this.$video.currentTime += seconds
@@ -196,6 +200,35 @@ class RawwwPlayer extends HTMLElement {
 	}
 	togglePlayPause() {
 		this.$video.paused ? this.$video.play() : this.$video.pause()
+	}
+	get isFullscreen() {
+		return !!(document.fullScreen || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement)
+	}
+	toggleFullscreen() {
+		if (this.isFullscreen) 
+		{
+			// ...exit fullscreen mode
+			// (Note: this can only be called on document)
+			if (document.exitFullscreen) document.exitFullscreen()
+			else if (document.mozCancelFullScreen) document.mozCancelFullScreen()
+			else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen()
+			else if (document.msExitFullscreen) document.msExitFullscreen()
+		}
+		else // ...otherwise enter fullscreen mode
+		{
+			// (Note: can be called on document, but here the specific element is used as it will also ensure that the element's children, e.g. the custom controls, go fullscreen also)
+			if (this.requestFullscreen) this.requestFullscreen()
+			else if (this.mozRequestFullScreen) this.mozRequestFullScreen()
+			else if (this.webkitRequestFullScreen) 
+			{
+				// Safari 5.1 only allows proper fullscreen on the video element. This also works fine on other WebKit browsers as the following CSS (set in styles.css) hides the default controls that appear again, and 
+				// ensures that our custom controls are visible:
+				// figure[data-fullscreen=true] video::-webkit-media-controls { display:none !important; }
+				// figure[data-fullscreen=true] .controls { z-index:2147483647; }
+				this.$video.webkitRequestFullScreen()
+			}
+			else if (this.msRequestFullscreen) this.msRequestFullscreen()
+		}
 	}
 }
 customElements.define('rawww-player', RawwwPlayer)
