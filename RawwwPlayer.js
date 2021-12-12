@@ -35,6 +35,8 @@ class RawwwPlayer extends HTMLElement {
 		this.$playbackBar = this.querySelector('.playback-bar')
 
 		this.$fullscreenBtn = this.querySelector('.fullscreen-btn')
+
+		this.$volumeInput = this.querySelector('.volume-input')
 	}
 	checkBrowserSupport() {
 		// Check if the browser actually supports the video element
@@ -64,6 +66,7 @@ class RawwwPlayer extends HTMLElement {
 		this.$rewindBtn.addEventListener('click', this.jumpBy.bind(this, -10))
 		this.$forwardBtn.addEventListener('click', this.jumpBy.bind(this, 10))
 		this.$fullscreenBtn.addEventListener('click', this.toggleFullscreen.bind(this))
+		this.$volumeInput.addEventListener('input', this.adjustVolume.bind(this))
 
 		this.$video.addEventListener('audioprocess', () => {
 			console.log('audioprocess')
@@ -140,6 +143,9 @@ class RawwwPlayer extends HTMLElement {
 		this.$video.addEventListener('waiting', () => {
 			console.log('waiting')
 		})
+	}
+	adjustVolume() {
+		this.$video.volume = this.$volumeInput.value
 	}
 	updateCurrentTime() {
 		this.$time.textContent = this.formatTime(this.$video.currentTime)
