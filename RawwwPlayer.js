@@ -33,6 +33,7 @@ class RawwwPlayer extends HTMLElement {
 
 		this.$preloadBar = this.querySelector('.preload-bar')
 		this.$playbackBar = this.querySelector('.playback-bar')
+		this.$playbackInput = this.querySelector('.playback-input')
 
 		this.$fullscreenBtn = this.querySelector('.fullscreen-btn')
 
@@ -68,6 +69,9 @@ class RawwwPlayer extends HTMLElement {
 		this.$fullscreenBtn.addEventListener('click', this.toggleFullscreen.bind(this))
 		this.$volumeInput.addEventListener('input', this.adjustVolume.bind(this))
 
+		this.$playbackInput.addEventListener('input', this.pauseAndAdjustPlayback.bind(this))
+		this.$playbackInput.addEventListener('change', this.maybeRestart.bind(this))
+
 		this.$video.addEventListener('audioprocess', () => {
 			console.log('audioprocess')
 		})
@@ -90,6 +94,8 @@ class RawwwPlayer extends HTMLElement {
 		})
 		this.$video.addEventListener('ended', () => {
 			console.log('ended')
+			this.playbackState = 'paused'
+			this.updatePlayBtn()
 		})
 		this.$video.addEventListener('loadeddata', () => {
 			console.log('loadeddata')
@@ -99,11 +105,11 @@ class RawwwPlayer extends HTMLElement {
 		})
 		this.$video.addEventListener('pause', () => {
 			console.log('pause')
-			this.updatePlayBtn('pause')
+			this.updatePlayBtn()
 		})
 		this.$video.addEventListener('play', () => {
 			console.log('play')
-			this.updatePlayBtn('play')
+			this.updatePlayBtn()
 		})
 		this.$video.addEventListener('playing', () => {
 			console.log('playing')
@@ -144,6 +150,13 @@ class RawwwPlayer extends HTMLElement {
 			console.log('waiting')
 		})
 	}
+	maybeRestart() {
+		if (this.playbackState == 'playing') this.$video.play()
+	}
+	pauseAndAdjustPlayback() {
+		this.$video.pause()
+		this.$video.currentTime = this.$playbackInput.value * this.$video.duration
+	}
 	adjustVolume() {
 		this.$video.volume = this.$volumeInput.value
 	}
@@ -172,12 +185,13 @@ class RawwwPlayer extends HTMLElement {
 	}
 	updatePlaybackBar() {
 		this.$playbackBar.style.setProperty('--playback-width', Math.trunc(this.$video.currentTime / this.$video.duration * 1000) / 1000)
+		this.$playbackInput.value = Math.trunc(this.$video.currentTime / this.$video.duration * 1000) / 1000
 	}
 	jumpBy(seconds) {
 		this.$video.currentTime += seconds
 	}
-	updatePlayBtn(state) {
-		if (state == 'play') {
+	updatePlayBtn() {
+		if (this.playbackState == 'playing') {
 			this.$playBtn.textContent = 'pause'
 		} else {
 			this.$playBtn.textContent = 'play'
@@ -205,7 +219,21 @@ class RawwwPlayer extends HTMLElement {
 		}
 	}
 	togglePlayPause() {
-		this.$video.paused ? this.$video.play() : this.$video.pause()
+		if (this.$video.paused) {
+			// unpause in reality
+			this.$video.play()
+			// unpause officially
+			this.playbackState = 'playing'
+			// unpause visually
+			this.updatePlayBtn()
+		} else {
+			// pause in reality
+			this.$video.pause()
+			// pause officially
+			this.playbackState = 'paused'
+			// pause visually
+			this.updatePlayBtn()
+		}
 	}
 	get isFullscreen() {
 		return !!(document.fullScreen || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement)
