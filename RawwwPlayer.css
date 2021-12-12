@@ -38,3 +38,8 @@ rawww-player .preload-bar {
     transform: translateX(var(--preload-x)) scaleX(var(--preload-width));
     background-color: grey;
 }
+
+
+rawww-player .playback-input {
+    width: 100%;
+}
