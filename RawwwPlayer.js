@@ -38,6 +38,10 @@ class RawwwPlayer extends HTMLElement {
 		this.$fullscreenBtn = this.querySelector('.fullscreen-btn')
 
 		this.$volumeInput = this.querySelector('.volume-input')
+
+		this.$speedx025Btn = this.querySelector('.speed-x0-25-btn')
+		this.$speedx1Btn = this.querySelector('.speed-x1-btn')
+		this.$speedx2Btn = this.querySelector('.speed-x2-btn')
 	}
 	checkBrowserSupport() {
 		// Check if the browser actually supports the video element
@@ -71,6 +75,10 @@ class RawwwPlayer extends HTMLElement {
 
 		this.$playbackInput.addEventListener('input', this.pauseAndAdjustPlayback.bind(this))
 		this.$playbackInput.addEventListener('change', this.maybeRestart.bind(this))
+
+		this.$speedx1Btn.addEventListener('click', () => { this.$video.playbackRate = 1})
+		this.$speedx025Btn.addEventListener('click', () => { this.$video.playbackRate = 0.25})
+		this.$speedx2Btn.addEventListener('click', () => { this.$video.playbackRate = 2})
 
 		this.$video.addEventListener('audioprocess', () => {
 			console.log('audioprocess')
