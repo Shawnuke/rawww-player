@@ -10,6 +10,7 @@ class RawwwPlayer extends HTMLElement {
 		this.storeHandlesToDOM()
 
 		// this.$video.controls = true // to be inverted later
+		this.$downloadBtn.href = this.$video.src || this.$video.querySelector('source')?.src
 
 		// set properties
 		this.currentTimeRange = {
@@ -42,12 +43,14 @@ class RawwwPlayer extends HTMLElement {
 		this.$speedx025Btn = this.querySelector('.speed-x0-25-btn')
 		this.$speedx1Btn = this.querySelector('.speed-x1-btn')
 		this.$speedx2Btn = this.querySelector('.speed-x2-btn')
+
+		this.$downloadBtn = this.querySelector('.download-btn')
 	}
 	checkBrowserSupport() {
 		// Check if the browser actually supports the video element
 		// example: Opera Mini supports JS but not <video> element
 		const supportsVideo = !!document.createElement('video').canPlayType
-		if (!supportsVideo) {
+		if (supportsVideo) {
 			console.log('The browser doesn\'t support the HTML <video> element')
 			return
 		}
