@@ -109,7 +109,7 @@ class RawwwPlayer extends HTMLElement {
 		})
 		this.$video.addEventListener('durationchange', () => {
 			console.log('durationchange')
-			this.updateCurrentTime()
+			this.updateCurrentTimeUI()
 			this.displayVideoDuration()
 		})
 		this.$video.addEventListener('emptied', () => {
@@ -117,7 +117,7 @@ class RawwwPlayer extends HTMLElement {
 		})
 		this.$video.addEventListener('ended', () => {
 			console.log('ended')
-			this.updatePlayBtn()
+			this.playbackState = 'paused'
 		})
 		this.$video.addEventListener('loadeddata', () => {
 			console.log('loadeddata')
@@ -137,7 +137,7 @@ class RawwwPlayer extends HTMLElement {
 		this.$video.addEventListener('progress', () => {
 			console.log('progress')
 			this.getCurrentTimeRange()
-			this.updatePreloadBar()
+			this.updatePreloadBarUI()
 		})
 		this.$video.addEventListener('ratechange', () => {
 			console.log('ratechange')
@@ -145,12 +145,12 @@ class RawwwPlayer extends HTMLElement {
 		this.$video.addEventListener('seeked', () => {
 			console.log('seeked')
 			this.getCurrentTimeRange() // select the good timerange for preload visualisation
-			this.updatePreloadBar()
+			this.updatePreloadBarUI()
 		})
 		this.$video.addEventListener('seeking', () => {
 			console.log('seeking')
-			this.updateCurrentTime()
-			this.updatePlaybackBar()
+			this.updateCurrentTimeUI()
+			this.updatePlaybackBarUI()
 		})
 		this.$video.addEventListener('stalled', () => {
 			console.log('stalled')
@@ -160,8 +160,8 @@ class RawwwPlayer extends HTMLElement {
 		})
 		this.$video.addEventListener('timeupdate', () => {
 			console.log('timeupdate')
-			this.updatePlaybackBar()
-			this.updateCurrentTime()
+			this.updatePlaybackBarUI()
+			this.updateCurrentTimeUI()
 		})
 		this.$video.addEventListener('volumechange', () => {
 			console.log('volumechange')
@@ -175,7 +175,7 @@ class RawwwPlayer extends HTMLElement {
 	 */
 	set muteState(newState) {
 		this.$video.muted = newState == 'muted' ? true : false
-		this.updateMuteBtn()  // set relative control appearance acordingly
+		this.updateMuteBtnUI()  // set relative control appearance acordingly
 	}
 	get muteState() {
 		if (this.$video.muted == true) return 'muted'
@@ -185,7 +185,7 @@ class RawwwPlayer extends HTMLElement {
 	toggleMuteState() {
 		this.muteState = this.muteState == 'muted' ? 'unmuted' : 'muted'
 	}
-	updateMuteBtn() {
+	updateMuteBtnUI() {
 		this.$muteBtn.textContent = this.$video.muted ? 'unmute' : 'mute'
 	}
 	/**
@@ -194,7 +194,7 @@ class RawwwPlayer extends HTMLElement {
 	set playbackState(newState) {
 		this._playbackState = newState // change inner var
 		newState == 'playing' ? this.$video.play() : this.$video.pause() // change $video state
-		this.updatePlayBtn() // set relative control appearance acordingly
+		this.updatePlayBtnUI() // set relative control appearance acordingly
 	}
 	get playbackState() {
 		return this._playbackState
@@ -206,7 +206,7 @@ class RawwwPlayer extends HTMLElement {
 			this.playbackState = 'playing'
 		}
 	}
-	updatePlayBtn() {
+	updatePlayBtnUI() {
 		this.$playBtn.textContent = this._playbackState == 'playing' ? 'pause' : 'play'
 	}
 	
@@ -217,10 +217,14 @@ class RawwwPlayer extends HTMLElement {
 		this.$video.pause()
 		this.$video.currentTime = this.$playbackInput.value * this.$video.duration
 	}
-	adjustVolume() {
-		this.$video.volume = this.$volumeInput.value
+	updateVolumeUI() {
+		this.$volumeInput.value = this.volume
 	}
-	updateCurrentTime() {
+	adjustVolume() {
+		this.volume = this.$volumeInput.value
+		this.$video.volume = this.volume
+	}
+	updateCurrentTimeUI() {
 		this.$time.textContent = this.formatTime(this.$video.currentTime)
 	}
 	getCurrentTimeRange() {
@@ -235,7 +239,7 @@ class RawwwPlayer extends HTMLElement {
 			}
 		}
 	}
-	updatePreloadBar() {
+	updatePreloadBarUI() {
 		this.currentTimeRange.duration = (this.currentTimeRange.end || 0) - (this.currentTimeRange.start || 0)
 		const posX = Math.trunc((this.currentTimeRange.start || 0) / this.$video.duration * 1000) / 1000
 		const width = Math.trunc(this.currentTimeRange.duration / this.$video.duration * 1000) / 1000
@@ -243,7 +247,7 @@ class RawwwPlayer extends HTMLElement {
 		this.$preloadBar.style.setProperty('--preload-x', posX)
 		this.$preloadBar.style.setProperty('--preload-width', width)
 	}
-	updatePlaybackBar() {
+	updatePlaybackBarUI() {
 		this.$playbackBar.style.setProperty('--playback-width', Math.trunc(this.$video.currentTime / this.$video.duration * 1000) / 1000)
 		this.$playbackInput.value = Math.trunc(this.$video.currentTime / this.$video.duration * 1000) / 1000
 	}
