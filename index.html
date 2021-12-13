@@ -9,14 +9,14 @@
 </head>
 <body>
     <rawww-player>
-        <video playsinline controls>
+        <video>
             <source src="http://mirrors.standaloneinstaller.com/video-sample/jellyfish-25-mbps-hd-hevc.mp4" type="video/mp4" />
             <p>Your browser doesn't support the HTML5 video API.
             If using another browser is not an option, you can <a href="http://mirrors.standaloneinstaller.com/video-sample/jellyfish-25-mbps-hd-hevc.mp4" download="video" target="_blank">download the MP4 file</a> instead</p>
         </video>
         
         <span class="time-display"></span>
-        <button class="play-btn">play</button>
+        <button class="play-btn"></button>
         <button class="rewind-btn">rewind</button>
         <button class="forward-btn">forward</button>
         <button class="fullscreen-btn">fullscreen</button>
@@ -26,6 +26,8 @@
         <input class="playback-input" type="range" min="0" max="1" step="0.001" value="0">
 
         <input class="volume-input" type="range" min="0" max="1" step="0.01" value="1">
+        <button class="mute-btn"></button>
+
         <button class="speed-x0-25-btn">x0.25</button>
         <button class="speed-x1-btn">x1</button>
         <button class="speed-x2-btn">x2</button>
