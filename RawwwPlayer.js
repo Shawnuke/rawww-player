@@ -9,7 +9,9 @@ class RawwwPlayer extends HTMLElement {
 		// store handles to DOM
 		this.storeHandlesToDOM()
 
-		// this.$video.controls = true // to be inverted later
+		// init vars
+		this.initStates()
+
 		this.$downloadBtn.href = this.$video.src || this.$video.querySelector('source')?.src
 
 		// set properties
@@ -21,30 +23,6 @@ class RawwwPlayer extends HTMLElement {
 		}
 
 		this.setListeners()
-	}
-	storeHandlesToDOM() {
-		this.$video = this.querySelector('video')
-
-		this.$time = this.querySelector('.time-display')
-
-		this.$playBtn = this.querySelector('.play-btn')
-
-		this.$rewindBtn = this.querySelector('.rewind-btn')
-		this.$forwardBtn = this.querySelector('.forward-btn')
-
-		this.$preloadBar = this.querySelector('.preload-bar')
-		this.$playbackBar = this.querySelector('.playback-bar')
-		this.$playbackInput = this.querySelector('.playback-input')
-
-		this.$fullscreenBtn = this.querySelector('.fullscreen-btn')
-
-		this.$volumeInput = this.querySelector('.volume-input')
-
-		this.$speedx025Btn = this.querySelector('.speed-x0-25-btn')
-		this.$speedx1Btn = this.querySelector('.speed-x1-btn')
-		this.$speedx2Btn = this.querySelector('.speed-x2-btn')
-
-		this.$downloadBtn = this.querySelector('.download-btn')
 	}
 	checkBrowserSupport() {
 		// Check if the browser actually supports the video element
@@ -69,19 +47,53 @@ class RawwwPlayer extends HTMLElement {
 			// If the primary (or should it be 'any'?) pointer is coarse, set the interface accordingly
 		}
 	}
+	storeHandlesToDOM() {
+		this.$video = this.querySelector('video')
+
+		this.$time = this.querySelector('.time-display')
+
+		this.$playBtn = this.querySelector('.play-btn')
+
+		this.$rewindBtn = this.querySelector('.rewind-btn')
+		this.$forwardBtn = this.querySelector('.forward-btn')
+
+		this.$preloadBar = this.querySelector('.preload-bar')
+		this.$playbackBar = this.querySelector('.playback-bar')
+		this.$playbackInput = this.querySelector('.playback-input')
+
+		this.$fullscreenBtn = this.querySelector('.fullscreen-btn')
+
+		this.$volumeInput = this.querySelector('.volume-input')
+
+		this.$speedx025Btn = this.querySelector('.speed-x0-25-btn')
+		this.$speedx1Btn = this.querySelector('.speed-x1-btn')
+		this.$speedx2Btn = this.querySelector('.speed-x2-btn')
+
+		this.$downloadBtn = this.querySelector('.download-btn')
+
+		this.$muteBtn = this.querySelector('.mute-btn')
+	}
+	initStates() {
+		this.$video.setAttribute('playsinline', true)
+		this.muteState = this.$video.autoplay ? 'muted' : 'unmuted'
+		this.$video.controls = true // to be inverted later
+		this.playbackState = this.$video.autoplay ? 'playing' : 'paused'
+	}
 	setListeners() {
-		this.$playBtn.addEventListener('click', this.togglePlayPause.bind(this))
+		this.$playBtn.addEventListener('click', this.togglePlaybackState.bind(this))
 		this.$rewindBtn.addEventListener('click', this.jumpBy.bind(this, -10))
 		this.$forwardBtn.addEventListener('click', this.jumpBy.bind(this, 10))
 		this.$fullscreenBtn.addEventListener('click', this.toggleFullscreen.bind(this))
 		this.$volumeInput.addEventListener('input', this.adjustVolume.bind(this))
 
 		this.$playbackInput.addEventListener('input', this.pauseAndAdjustPlayback.bind(this))
-		this.$playbackInput.addEventListener('change', this.maybeRestart.bind(this))
+		this.$playbackInput.addEventListener('change', this.maybeRestartAfterDrag.bind(this))
 
 		this.$speedx1Btn.addEventListener('click', () => { this.$video.playbackRate = 1})
 		this.$speedx025Btn.addEventListener('click', () => { this.$video.playbackRate = 0.25})
 		this.$speedx2Btn.addEventListener('click', () => { this.$video.playbackRate = 2})
+
+		this.$muteBtn.addEventListener('click', this.toggleMuteState.bind(this))
 
 		this.$video.addEventListener('audioprocess', () => {
 			console.log('audioprocess')
@@ -105,7 +117,6 @@ class RawwwPlayer extends HTMLElement {
 		})
 		this.$video.addEventListener('ended', () => {
 			console.log('ended')
-			this.playbackState = 'paused'
 			this.updatePlayBtn()
 		})
 		this.$video.addEventListener('loadeddata', () => {
@@ -116,11 +127,9 @@ class RawwwPlayer extends HTMLElement {
 		})
 		this.$video.addEventListener('pause', () => {
 			console.log('pause')
-			this.updatePlayBtn()
 		})
 		this.$video.addEventListener('play', () => {
 			console.log('play')
-			this.updatePlayBtn()
 		})
 		this.$video.addEventListener('playing', () => {
 			console.log('playing')
@@ -161,7 +170,47 @@ class RawwwPlayer extends HTMLElement {
 			console.log('waiting')
 		})
 	}
-	maybeRestart() {
+	/**
+	 * @param {string} newState
+	 */
+	set muteState(newState) {
+		this.$video.muted = newState == 'muted' ? true : false
+		this.updateMuteBtn()  // set relative control appearance acordingly
+	}
+	get muteState() {
+		if (this.$video.muted == true) return 'muted'
+		// else
+		return 'unmuted'
+	}
+	toggleMuteState() {
+		this.muteState = this.muteState == 'muted' ? 'unmuted' : 'muted'
+	}
+	updateMuteBtn() {
+		this.$muteBtn.textContent = this.$video.muted ? 'unmute' : 'mute'
+	}
+	/**
+	 * @param {string} newState
+	 */
+	set playbackState(newState) {
+		this._playbackState = newState // change inner var
+		newState == 'playing' ? this.$video.play() : this.$video.pause() // change $video state
+		this.updatePlayBtn() // set relative control appearance acordingly
+	}
+	get playbackState() {
+		return this._playbackState
+	}
+	togglePlaybackState() {
+		if (this.playbackState == 'playing') {
+			this.playbackState = 'paused'
+		} else {
+			this.playbackState = 'playing'
+		}
+	}
+	updatePlayBtn() {
+		this.$playBtn.textContent = this._playbackState == 'playing' ? 'pause' : 'play'
+	}
+	
+	maybeRestartAfterDrag() {
 		if (this.playbackState == 'playing') this.$video.play()
 	}
 	pauseAndAdjustPlayback() {
@@ -201,13 +250,6 @@ class RawwwPlayer extends HTMLElement {
 	jumpBy(seconds) {
 		this.$video.currentTime += seconds
 	}
-	updatePlayBtn() {
-		if (this.playbackState == 'playing') {
-			this.$playBtn.textContent = 'pause'
-		} else {
-			this.$playBtn.textContent = 'play'
-		}
-	}
 	displayVideoDuration() {
 		const formatedTime = this.formatTime(this.$video.duration)
 		this.$time.dataset.duration = ` / ${formatedTime}`
@@ -227,23 +269,6 @@ class RawwwPlayer extends HTMLElement {
 			return m.toString().length == 1 ? `${m}:${ss}` : `${mm}:${ss}`
 		} else {
 			return `${hh}:${mm}:${ss}`
-		}
-	}
-	togglePlayPause() {
-		if (this.$video.paused) {
-			// unpause in reality
-			this.$video.play()
-			// unpause officially
-			this.playbackState = 'playing'
-			// unpause visually
-			this.updatePlayBtn()
-		} else {
-			// pause in reality
-			this.$video.pause()
-			// pause officially
-			this.playbackState = 'paused'
-			// pause visually
-			this.updatePlayBtn()
 		}
 	}
 	get isFullscreen() {
