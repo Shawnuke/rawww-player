@@ -57,13 +57,16 @@ class RawwwPlayer extends HTMLElement {
 		this.$rewindBtn = this.querySelector('.rewind-btn')
 		this.$forwardBtn = this.querySelector('.forward-btn')
 
-		this.$preloadBar = this.querySelector('.preload-bar')
-		this.$playbackBar = this.querySelector('.playback-bar')
-		this.$playbackInput = this.querySelector('.playback-input')
+		this.$playbackContainer = this.querySelector('.playback-track')
+			this.$preloadBar = this.$playbackContainer.querySelector('.preload-bar')
+			this.$playbackBar = this.$playbackContainer.querySelector('.playback-bar')
+			this.$playbackInput = this.$playbackContainer.querySelector('.playback-input')
 
 		this.$fullscreenBtn = this.querySelector('.fullscreen-btn')
 
-		this.$volumeInput = this.querySelector('.volume-input')
+		this.$volumeContainer = this.querySelector('.volume-track')
+			this.$volumeInput = this.$volumeContainer.querySelector('.volume-input')
+			this.$volumeBar = this.$volumeContainer.querySelector('.volume-bar')
 
 		this.$speedx025Btn = this.querySelector('.speed-x0-25-btn')
 		this.$speedx1Btn = this.querySelector('.speed-x1-btn')
@@ -76,7 +79,7 @@ class RawwwPlayer extends HTMLElement {
 	initStates() {
 		this.$video.setAttribute('playsinline', true)
 		this.muteState = this.$video.autoplay ? 'muted' : 'unmuted'
-		this.$video.controls = true // to be inverted later
+		this.$video.controls = false
 		this.playbackState = this.$video.autoplay ? 'playing' : 'paused'
 	}
 	setListeners() {
@@ -84,7 +87,7 @@ class RawwwPlayer extends HTMLElement {
 		this.$rewindBtn.addEventListener('click', this.jumpBy.bind(this, -10))
 		this.$forwardBtn.addEventListener('click', this.jumpBy.bind(this, 10))
 		this.$fullscreenBtn.addEventListener('click', this.toggleFullscreen.bind(this))
-		this.$volumeInput.addEventListener('input', this.adjustVolume.bind(this))
+		this.$volumeInput.addEventListener('input', this.adjustVolumeBasedOnInput.bind(this))
 
 		this.$playbackInput.addEventListener('input', this.pauseAndAdjustPlayback.bind(this))
 		this.$playbackInput.addEventListener('change', this.maybeRestartAfterDrag.bind(this))
@@ -174,8 +177,11 @@ class RawwwPlayer extends HTMLElement {
 	 * @param {string} newState
 	 */
 	set muteState(newState) {
+		console.log('SET')
 		this.$video.muted = newState == 'muted' ? true : false
 		this.updateMuteBtnUI()  // set relative control appearance acordingly
+		this.updateVolumeBarUI()
+		this.updateVolumeInputUI()
 	}
 	get muteState() {
 		if (this.$video.muted == true) return 'muted'
@@ -187,6 +193,21 @@ class RawwwPlayer extends HTMLElement {
 	}
 	updateMuteBtnUI() {
 		this.$muteBtn.textContent = this.$video.muted ? 'unmute' : 'mute'
+	}
+	updateVolumeBarUI() {
+		let volume = 0
+		if (!this.$video.muted) {
+			volume = this._volume || this.$volumeInput.value
+		}
+		this.$volumeContainer.style.setProperty('--volume-width', volume)
+	}
+	updateVolumeInputUI() {
+		this.$volumeInput.value = this.muteState == 'muted' ? 0 : this._volume || this.$volumeInput.value
+	}
+	adjustVolumeBasedOnInput() {
+		this._volume = this.$volumeInput.value
+		this.$video.volume = this._volume
+		this.updateVolumeBarUI()
 	}
 	/**
 	 * @param {string} newState
@@ -216,13 +237,6 @@ class RawwwPlayer extends HTMLElement {
 	pauseAndAdjustPlayback() {
 		this.$video.pause()
 		this.$video.currentTime = this.$playbackInput.value * this.$video.duration
-	}
-	updateVolumeUI() {
-		this.$volumeInput.value = this.volume
-	}
-	adjustVolume() {
-		this.volume = this.$volumeInput.value
-		this.$video.volume = this.volume
 	}
 	updateCurrentTimeUI() {
 		this.$time.textContent = this.formatTime(this.$video.currentTime)
@@ -256,7 +270,7 @@ class RawwwPlayer extends HTMLElement {
 	}
 	displayVideoDuration() {
 		const formatedTime = this.formatTime(this.$video.duration)
-		this.$time.dataset.duration = ` / ${formatedTime}`
+		this.$time.dataset.duration = `/ ${formatedTime}`
 	}
 	formatTime(durationInSeconds) { // function to convert a timestamp in seconds to display in HH:MM:SS format
 		const duration = Math.trunc(durationInSeconds)
