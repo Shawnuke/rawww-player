@@ -1,13 +1,15 @@
 rawww-player {
     position: relative;
-    display: block;
     width: 800px;
+    display: grid;
+    grid-auto-rows: auto;
     background: black;
+
 }
 rawww-player video {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
     background: none;
 }
 rawww-player video::-webkit-media-controls {
@@ -18,6 +20,7 @@ rawww-player button {
     appearance: none;
 }
 rawww-player .controls {
+    height: 100%;
     font-family: sans-serif;
 }
 rawww-player .time-display {
