@@ -1,0 +1,87 @@
+rawww-player .track {
+    position: relative;
+    height: var(--track-height);
+    margin: 0 calc(var(--thumb-width) / 2);
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+
+    background: var(--track-bg-color);
+    border-radius: var(--track-brad);
+}
+/**
+ * playback range input 
+ */
+rawww-player .track.playback-track {
+    --thumb-width: 16px;
+    --thumb-height: 36px;
+    --thumb-border: none;
+    --thumb-color: red;
+    --thumb-brad: 3px;
+    --thumb-cursor: grab;
+    --thumb-shadow: none;
+
+    --track-height: 14px;
+    --track-bg-color: rgb(175, 175, 105);
+    --track-brad: 0px;
+    
+    --seekable-height: 36px;
+    --seekable-cursor: pointer;
+
+    --playback-color: rgb(255, 115, 0);
+    --preload-color: grey;
+
+
+    --preload-x: 0; /* default value, do not touch */
+    --preload-width: 0; /* default value, do not touch */
+    --playback-width: 0; /* default value, do not touch */
+}
+rawww-player .track.playback-track .preload-bar,
+rawww-player .track.playback-track .playback-bar {
+    position: absolute;
+    inset: 0;
+    transform-origin: left;
+}
+rawww-player .track.playback-track .preload-bar {
+    transform: translateX(var(--preload-x)) scaleX(var(--preload-width));
+    background-color: var(--preload-color);
+}
+rawww-player .track.playback-track .playback-bar {
+    transform: scaleX(var(--playback-width));
+    background-color: var(--playback-color);
+}
+
+/**
+ * volume range input 
+ */
+rawww-player .track.volume-track {
+    --thumb-width: 11px;
+    --thumb-height: 11px;
+    --thumb-border: none;
+    --thumb-color: rgb(255, 0, 221);
+    --thumb-brad: 6px;
+    --thumb-cursor: grab;
+    --thumb-shadow: none;
+
+    --track-height: 5px;
+    --track-bg-color: rgb(0, 238, 255);
+    --track-brad: 0px;
+    
+    --seekable-height: 36px;
+    --seekable-cursor: pointer;
+
+    --volume-color: rgb(32, 170, 32);
+    
+    --volume-width: 0; /* default value, do not touch */
+}
+rawww-player .track.volume-track .volume-bar {
+    position: absolute;
+    inset: 0;
+    transform-origin: left;
+}
+rawww-player .track.volume-track .volume-bar {
+    transform: scaleX(var(--volume-width));
+    background-color: var(--volume-color);
+}

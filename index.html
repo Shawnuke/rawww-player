@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rawww Player</title>
     <link rel="stylesheet" type="text/css" href="RawwwPlayer.css">
+    <link rel="stylesheet" type="text/css" href="RawwwPlayer-unstyle-range-inputs.css">
+    <link rel="stylesheet" type="text/css" href="RawwwPlayer-style-range-inputs.css">
 </head>
 <body>
     <rawww-player>
@@ -15,24 +17,41 @@
             If using another browser is not an option, you can <a href="http://mirrors.standaloneinstaller.com/video-sample/jellyfish-25-mbps-hd-hevc.mp4" download="video" target="_blank">download the MP4 file</a> instead</p>
         </video>
         
-        <span class="time-display"></span>
-        <button class="play-btn"></button>
-        <button class="rewind-btn">rewind</button>
-        <button class="forward-btn">forward</button>
-        <button class="fullscreen-btn">fullscreen</button>
+        <div class="controls" data-template="youtube">
+            <span class="time-display"></span>
 
-        <div class="preload-bar"></div>
-        <div class="playback-bar"></div>
-        <input class="playback-input" type="range" min="0" max="1" step="0.001" value="0">
+            <button class="play-btn"></button>
 
-        <input class="volume-input" type="range" min="0" max="1" step="0.01" value="1">
-        <button class="mute-btn"></button>
+            <button class="fullscreen-btn">fullscreen</button>
 
-        <button class="speed-x0-25-btn">x0.25</button>
-        <button class="speed-x1-btn">x1</button>
-        <button class="speed-x2-btn">x2</button>
+            <div class="playback-area">
+                <div class="track playback-track">
+                    <div class="preload-bar"></div>
+                    <div class="playback-bar"></div>
+                    <input class="playback-input" type="range" min="0" max="1" step="0.001" value="0">
+                </div>
+            </div>
 
-        <a download="video" class="download-btn">download</a>
+            <div class="volume-controls">
+                <button class="mute-btn"></button>
+
+                <div class="track volume-track">
+                    <div class="volume-bar"></div>
+                    <input class="volume-input" type="range" min="0" max="1" step="0.001" value="1">
+                </div>
+            </div>
+            
+        </div>
+        <div class="controls-not-set-yet">
+            <button class="rewind-btn">rewind</button>
+            <button class="forward-btn">forward</button>
+
+            <button class="speed-x0-25-btn">x0.25</button>
+            <button class="speed-x1-btn">x1</button>
+            <button class="speed-x2-btn">x2</button>
+
+            <a download="video" class="download-btn">download</a>
+        </div>
     </rawww-player>
 
     <script src="RawwwPlayer.js"></script>

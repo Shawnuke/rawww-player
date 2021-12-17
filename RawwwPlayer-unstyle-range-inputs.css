@@ -1,0 +1,107 @@
+/**
+ * All range inputs 
+ */
+/**
+ * Get invisible or unstyled range inputs in all browsers
+ */
+ rawww-player input[type=range] {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    width: calc(100% + var(--thumb-width)); /* Specific width is required for Firefox. */
+    background: transparent; /* Otherwise white in Chrome */
+}
+rawww-player input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+rawww-player input[type=range]:focus {
+    outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+rawww-player input[type=range]::-ms-track {
+    width: 100%;
+    cursor: pointer;
+    /* Hides the slider so custom styles can be added */
+    background: transparent; 
+    border-color: transparent;
+    color: transparent;
+}
+/**
+ * style the thumb
+ */
+/* Special styling for WebKit/Blink */
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: var(--thumb-width);
+    height: var(--thumb-height);
+    background: var(--thumb-color);
+    border-radius: var(--thumb-brad);
+    cursor: var(--thumb-cursor);
+
+    border: var(--thumb-border);
+    box-shadow: var(--thumb-shadow); /* Add cool effects to your sliders! */
+
+    margin-top: calc((var(--thumb-height) - var(--seekable-height)) / -2); /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+
+    transform: scale(0);
+    transition: transform 0.1s ease 0s;
+}
+input[type=range]:hover::-webkit-slider-thumb {
+    transform: scale(1);
+}
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+    width: var(--thumb-width);
+    height: var(--thumb-height);
+    background: var(--thumb-color);
+    border-radius: var(--thumb-brad);
+    cursor: var(--thumb-cursor);
+
+    border: var(--thumb-border);
+    box-shadow: var(--thumb-shadow);
+
+    transform: scale(0);
+    transition: transform 0.1s ease 0s;
+}
+input[type=range]:hover::-moz-range-thumb {
+    transform: scale(1);
+}
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+    width: var(--thumb-width);
+    height: var(--thumb-height);
+    background: var(--thumb-color);
+    border-radius: var(--thumb-brad);
+    cursor: var(--thumb-cursor);
+
+    border: var(--thumb-border);
+    box-shadow: var(--thumb-shadow);
+
+    transform: scale(0);
+    transition: transform 0.1s ease 0s;
+}
+input[type=range]:hover::-ms-thumb {
+    transform: scale(1);
+}
+/**
+ * Styling the track
+ */
+rawww-player input[type=range] {
+    position: absolute;
+    left: calc(var(--thumb-width) / -2);
+    width: calc(100% + var(--thumb-width));
+    margin: 0;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: var(--seekable-height);
+    cursor: var(--seekable-cursor);
+}
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: var(--seekable-height);
+    cursor: var(--seekable-cursor);
+}
+input[type=range]::-ms-track {
+    width: 100%;
+    height: var(--seekable-height);
+    cursor: var(--seekable-cursor);
+    color: transparent;
+}
