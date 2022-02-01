@@ -1,0 +1,75 @@
+/**
+ * Attempt to make templates-ready controls disposition
+ */
+ rawww-player .controls[data-template="youtube"] {
+    position: absolute;
+    inset: 0;
+    padding: 0 12px;
+    display: grid;
+    grid-template-areas: "empty     empty       empty       empty       empty"
+                         "playback  playback    playback    playback    playback"
+                         "play      volume      time        empty2      fullscreen";
+    grid-template-rows: 1fr 22px 48px;
+    grid-template-columns: 48px 100px 72px 1fr 48px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent 160px);
+    color: white;
+}
+rawww-player .controls[data-template="youtube"] .playback-area {
+    grid-area: playback;
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+}
+rawww-player .controls[data-template="youtube"] .playback-track {
+    --seekable-height: 34px;
+    --track-height: 5px;
+    --track-bg-color: rgba(255,255,255,0.2);
+    --preload-color: rgba(255,255,255,0.4);
+    --playback-color: #f00;
+    --thumb-color: #f00;
+    --thumb-width: 13px;
+    --thumb-height: 13px;
+    --thumb-brad: 7px;
+
+    width: 100%;
+    margin: 0;
+    transition: transform 0.1s ease 0s;
+    transform: scaleY(0.6);
+}
+rawww-player .controls[data-template="youtube"] .playback-track:hover {
+    transform: scaleY(1);
+}
+rawww-player .controls[data-template="youtube"] .play-btn {
+    grid-area: play;
+}
+rawww-player .controls[data-template="youtube"] .volume-controls {
+    grid-area: volume;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+rawww-player .controls[data-template="youtube"] .mute-btn {
+    width: 48px;
+    height: 48px;
+}
+rawww-player .controls[data-template="youtube"] .volume-track {
+    --track-height: 3px;
+    --track-bg-color: rgba(255,255,255,0.2);
+    --volume-color: white;
+    --thumb-color: white;
+    --seekable-height: 48px;
+
+    flex: 1;
+}
+rawww-player .controls[data-template="youtube"] .time-display {
+    grid-area: time;
+    font-size: 13px;
+}
+rawww-player .controls[data-template="youtube"] .time-display::after {
+    margin-left: 0.5ch;
+}
+rawww-player .controls[data-template="youtube"] .fullscreen-btn {
+    grid-area: fullscreen;
+}
