@@ -60,9 +60,7 @@ Currently ? None.
 * In your HTML, wrap your `video` element like so:
 ````html
 <rawww-player>
-    <video width="100%" height="100%" controls>
-        <source src="http://mirrors.standaloneinstaller.com/video-sample/star_trails.mp4" type="video/mp4" />
-    </video>
+   <source src="http://mirrors.standaloneinstaller.com/video-sample/star_trails.mp4" type="video/mp4" />
 </rawww-player>
 ````
 * Bob's your uncle
